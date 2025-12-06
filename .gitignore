@@ -1,0 +1,10 @@
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+*.pkl
+model_artifacts/
+temp_data/
+.env
+*.token
+mlruns/
+mlartifacts/
