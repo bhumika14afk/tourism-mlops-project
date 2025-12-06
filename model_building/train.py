@@ -88,7 +88,7 @@ grid_search = GridSearchCV(
 
 grid_search.fit(X_train, y_train)
 
-best_model = grid_search.best_estimator()
+best_model = grid_search.best_estimator_
 
 if MLFLOW_AVAILABLE:
     mlflow.log_params(grid_search.best_params_)
