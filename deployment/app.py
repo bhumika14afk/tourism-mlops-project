@@ -12,16 +12,14 @@ import streamlit as st
 import pandas as pd
 import joblib
 from huggingface_hub import hf_hub_download
-import os
+import numpy as np
 
-# Page configuration
 st.set_page_config(
     page_title="Tourism Package Prediction",
     page_icon="✈️",
     layout="wide"
 )
 
-# Download model from Hugging Face
 @st.cache_resource
 def load_model():
     try:
@@ -35,17 +33,14 @@ def load_model():
         st.error(f"Error loading model: {e}")
         return None
 
-# Load model
 model = load_model()
 
-# Title
 st.title("✈️ Tourism Package Prediction System")
 st.markdown("### Predict whether a customer will purchase the Wellness Tourism Package")
 
 if model is None:
     st.error("Failed to load the model. Please check the Hugging Face repository.")
 else:
-    # Create two columns for input
     col1, col2 = st.columns(2)
 
     with col1:
@@ -79,9 +74,7 @@ else:
         pitch_satisfaction_score = st.slider("Pitch Satisfaction Score", 1, 5, 3)
         number_of_followups = st.number_input("Number of Follow-ups", min_value=0.0, max_value=10.0, value=2.0, step=1.0)
 
-    # Prediction button
     if st.button("🔮 Predict Purchase Probability", type="primary", use_container_width=True):
-        # Create input dataframe
         input_data = pd.DataFrame({
             'Age': [age],
             'TypeofContact': [type_of_contact],
@@ -104,11 +97,9 @@ else:
         })
         
         try:
-            # Make prediction
             prediction = model.predict(input_data)[0]
             prediction_proba = model.predict_proba(input_data)[0]
             
-            # Display results
             st.markdown("---")
             st.subheader("📊 Prediction Results")
             
@@ -117,19 +108,17 @@ else:
             else:
                 st.error("❌ **Customer is UNLIKELY to purchase the package**")
             
-            # Show probability breakdown
             col_a, col_b = st.columns(2)
             with col_a:
                 st.metric("No Purchase Probability", f"{prediction_proba[0]:.1%}")
             with col_b:
                 st.metric("Purchase Probability", f"{prediction_proba[1]:.1%}")
             
-            # Progress bar
-            st.progress(prediction_proba[1])
+            # Fix: Convert to float to avoid float32 error
+            st.progress(float(prediction_proba[1]))
             
         except Exception as e:
             st.error(f"Error making prediction: {e}")
 
-# Footer
 st.markdown("---")
-st.markdown("**Visit with Us** - Tourism Package Prediction System")
+st.markdown("**Visit with Us** - Tourism Package Prediction System ")
